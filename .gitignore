@@ -1,0 +1,27 @@
+# dataset
+dataset/
+datasets/
+data/images/
+data/labels/
+
+# training results
+runs/
+
+# cache
+__pycache__/
+*.pyc
+
+# environment
+venv/
+
+# video & image besar
+*.mp4
+*.avi
+*.jpg
+*.png
+
+# notebook checkpoint
+.ipynb_checkpoints/
+
+# model besar opsional
+last.pt

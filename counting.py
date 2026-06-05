@@ -1,7 +1,6 @@
 import cv2
-from wcwidth import width
 from palleting import add_box_to_conveyor
-from analysis import ratios
+import calibration
 
 counted_ids = set()
 
@@ -59,20 +58,27 @@ def process_counting(frame, box, track_id, class_name):
                 class_count[class_name] += 1
 
                 print(f"{class_name} counted")
-
-                #ngumpulin rasio
-
                 width = x2 - x1
                 height = y2 - y1
-
                 ratio = width / height
 
-                ratios.append(ratio)
+                print(
+                    f"W={width}"
+                    f"H={height}"
+                    f"R={ratio:.2f}"
+                )
 
-                print(f"ratio = {ratio:.2f}")
-
-                # tambah buffer conveyor
+                    # tambah buffer conveyor/cuma front
                 if class_name == "front":
+                    #ini simpen data
+                    calibration.save_calibration_data(
+                        track_id,
+                        class_name,
+                        width,
+                        height,
+                        ratio
+                    )
+                    
                     add_box_to_conveyor()
 
     # update posisi terakhir

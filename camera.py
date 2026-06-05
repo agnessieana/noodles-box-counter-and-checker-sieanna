@@ -2,13 +2,13 @@ import cv2
 from ultralytics import YOLO
 from counting import process_counting, class_count
 import palleting
-from calibration import export_to_excel
+import calibration
 
 model = YOLO("D:/Magang/BOX_CHECKING2/runs/detect/train-3/weights/best.pt").to("cuda")
-cap = cv2.VideoCapture("D:/Magang/BOX_CHECKING2/box_project/video_asset/ng_a.mp4")
+cap = cv2.VideoCapture("D:/Magang/BOX_CHECKING2/box_project/video_asset/calibration_videos.mp4")
 
 while True:
-    ret, frame = cap.read()
+    ret, frame = cap.read() 
 
     if not ret:
         break
@@ -43,6 +43,7 @@ while True:
             cls_id = int(box.cls[0])
 
             class_name = model.names[cls_id]
+            class_name = class_name.lower()
 
             frame = process_counting(
                 frame,
@@ -130,5 +131,6 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 
+calibration.export_to_excel()
 cap.release()
 cv2.destroyAllWindows()

@@ -2,10 +2,11 @@ import cv2
 from ultralytics import YOLO
 from counting import process_counting, class_count
 import palleting
-import calibration
+#import calibration
+import orientation_check
 
 model = YOLO("D:/Magang/BOX_CHECKING2/runs/detect/train-3/weights/best.pt").to("cuda")
-cap = cv2.VideoCapture("D:/Magang/BOX_CHECKING2/box_project/video_asset/calibration_videos.mp4")
+cap = cv2.VideoCapture("D:/Magang/BOX_CHECKING2/box_project/video_asset/ng_a.mp4")
 
 while True:
     ret, frame = cap.read() 
@@ -19,12 +20,6 @@ while True:
         conf=0.7,
         iou=0.4,
         persist=True)
-    
-    #frame hasil deteksi
-    annotated_frame = results[0].plot(
-        line_width=1,
-        font_size=0.5
-    )
 
     
 #buat counting
@@ -62,6 +57,38 @@ while True:
         font_size=0.5   
     )
 
+    #cek orientasi
+    for r in results:
+        boxes = r.boxes
+
+        for box in boxes:
+            
+            if box.id is None:
+                continue
+
+            track_id = int(box.id[0])
+
+            if track_id not in orientation_check.orientation_result:
+                continue
+
+            if orientation_check.orientation_result[track_id] == False:
+                continue
+
+            x1, y1, x2, y2 = map(
+                int,
+                box.xyxy[0]
+            )
+
+            cv2.putText(
+                annotated_frame,
+                "WRONG POSITION",
+                (x1, y1 -10),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.7,
+                (0, 0, 255),
+                2
+            )
+
     #font buat count
     cv2.putText(
         annotated_frame,
@@ -74,15 +101,15 @@ while True:
     )
 
     #font palleting
-    cv2.putText(
-        annotated_frame,
-        f"On conveyor: {palleting.current_on_con}",
-        (20, 100),
-        cv2.FONT_HERSHEY_SIMPLEX,
-        0.8,
-        (255, 0, 0),
-        2
-    )
+    # cv2.putText(
+    #     annotated_frame,
+    #     f"On conveyor: {palleting.current_on_con}",
+    #     (20, 100),
+    #     cv2.FONT_HERSHEY_SIMPLEX,
+    #     0.8,
+    #     (255, 0, 0),
+    #     2
+    # )
 
     cv2.putText(
         annotated_frame,
@@ -131,6 +158,6 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 
-calibration.export_to_excel()
+#calibration.export_to_excel()
 cap.release()
 cv2.destroyAllWindows()

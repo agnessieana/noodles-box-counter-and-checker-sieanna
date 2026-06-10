@@ -1,6 +1,10 @@
 import cv2
 from palleting import add_box_to_conveyor
 import calibration
+import orientation_check
+
+print("ORIENTATION FILE:", orientation_check.__file__)
+print("FUNCTION:", orientation_check.check_orientation.__code__.co_varnames)
 
 counted_ids = set()
 
@@ -49,7 +53,23 @@ def process_counting(frame, box, track_id, class_name):
     # crossing kanan -> kiri
     if prev_x > roi_x and center_x <= roi_x:
 
+        #cek objek baru
         if track_id not in counted_ids:
+
+            width = x2 - x1
+            height = y2 - y1
+            ratio = width / height
+
+            abnormal = orientation_check.check_orientation(
+                track_id,
+                class_name,
+                width,
+                height
+            )
+
+            if abnormal :
+                last_positions[track_id] = center_x
+                return frame
 
             counted_ids.add(track_id)
 
@@ -57,16 +77,6 @@ def process_counting(frame, box, track_id, class_name):
 
                 class_count[class_name] += 1
 
-                print(f"{class_name} counted")
-                width = x2 - x1
-                height = y2 - y1
-                ratio = width / height
-
-                print(
-                    f"W={width}"
-                    f"H={height}"
-                    f"R={ratio:.2f}"
-                )
 
                     # tambah buffer conveyor/cuma front
                 if class_name == "front":
@@ -79,6 +89,7 @@ def process_counting(frame, box, track_id, class_name):
                         ratio
                     )
                     
+                    #masuk buffer konfeyor
                     add_box_to_conveyor()
 
     # update posisi terakhir

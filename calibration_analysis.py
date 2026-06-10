@@ -1,16 +1,28 @@
 import pandas as pd
 
-df = pd.read_excel("calibration_data.xlsx")
+df = pd.read_excel("calibration_data3.xlsx")
 
-median_ratio = df["ratio"].median()
+print("=== HEIGHT ===")
+print(df["height"].describe())
 
-min_ratio = df["ratio"].min()
+print("\n=== WIDTH ===")
+print(df["width"].describe())
 
-max_ratio = df["ratio"].max()
+print("\n=== RATIO ===")
+print(df["ratio"].describe())
 
-print(f"Median : {median_ratio:.3f}")
-lower_limit = df["ratio"].quantile(0.05)
-upper_limit = df["ratio"].quantile(0.95)
+print("\n=== PERCENTILE ===")
 
-""" print(f"Min    : {min_ratio:.3f}")
-print(f"Max    : {max_ratio:.3f}") """
+print("Height P5 :", df["height"].quantile(0.05))   #129.0
+print("Height P10 :", df["height"].quantile(0.10))  #130.5
+                                            
+print()
+
+print("Ratio P10 :", df["ratio"].quantile(0.10))
+print("Ratio P50 :", df["ratio"].quantile(0.50))
+print("Ratio P90 :", df["ratio"].quantile(0.90))
+
+print()
+
+print("Width P90 :", df["width"].quantile(0.90))   #190.5
+print("Width P95 :", df["width"].quantile(0.95))   #230.75

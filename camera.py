@@ -6,13 +6,28 @@ import palleting
 import orientation_check
 
 model = YOLO("D:/Magang/BOX_CHECKING2/runs/detect/train-3/weights/best.pt").to("cuda")
-cap = cv2.VideoCapture("D:/Magang/BOX_CHECKING2/box_project/video_asset/ng_a.mp4")
+cap = cv2.VideoCapture("D:\\Magang\\BOX_CHECKING2\\box_project\\video_asset\\ng_1.mp4")
+
+""" cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+
+cv2.namedWindow("YOLO Detection", cv2.WINDOW_NORMAL)
+cv2.resizeWindow("YOLO Detection", 1280, 720)
+
+print("CAP OPEN:", cap.isOpened())
+print("BEFORE LOOP") """
+# print(
+#     cap.get(cv2.CAP_PROP_FRAME_WIDTH),
+#     cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+# )
 
 while True:
     ret, frame = cap.read() 
 
     if not ret:
         break
+
+    #benerin ukuran frame """   frame = cv2.resize(frame, (1280,720)) """
 
     # Deteksi dan track (dia kasih id)
     results = model.track(
